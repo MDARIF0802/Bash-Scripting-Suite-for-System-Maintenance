@@ -54,25 +54,23 @@ Option	Description
 4️⃣	Exit the Suite
 
 1️⃣ Run Backup
-
 Creates a compressed backup in /home/$USER/Backups
+<img width="980" height="422" alt="image" src="https://github.com/user-attachments/assets/ccf9d1fb-796b-4483-93f1-4ddbb7c69e5d" />
 
 
 2️⃣ System Update & Cleanup
 
 Updates packages, removes unnecessary ones, and cleans the system cache
-![Uploading image.png…]()
-
-
+<img width="980" height="450" alt="image" src="https://github.com/user-attachments/assets/c588d59c-6f5c-427c-9485-0f998da95044" />
 
 3️⃣ Monitor Logs
-
 Checks /var/log/syslog for keywords like error, fail, and critical
 <img width="980" height="402" alt="image" src="https://github.com/user-attachments/assets/dbd137c6-0ba5-447e-ab1c-723314cb1332" />
 
 4️⃣ Menu Interface
 
 Simple, clear, and user-friendly text-based menu for all operations
+<img width="980" height="320" alt="image" src="https://github.com/user-attachments/assets/adcbbeaf-10fe-49bb-9e22-4050af695e4f" />
 
 📁 Output Files
 File	Description
