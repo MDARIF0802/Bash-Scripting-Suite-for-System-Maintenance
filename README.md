@@ -56,12 +56,12 @@ Option	Description
 1️⃣ Run Backup
 
 Creates a compressed backup in /home/$USER/Backups
-![Uploading image.png…]()
 
 
 2️⃣ System Update & Cleanup
 
 Updates packages, removes unnecessary ones, and cleans the system cache
+![Uploading image.png…]()
 
 
 
@@ -80,11 +80,6 @@ File	Description
 /home/$USER/backup_log.txt	Backup operation logs
 /home/$USER/system_update_log.txt	System update and cleanup logs
 /home/$USER/alerts.txt	Log monitoring alerts
-🧑‍💻 Author
-
-Md Arif
-📧 arifmd0802@gmail.com
-
 
 🛠️ Technologies Used
 
@@ -102,13 +97,6 @@ Automation and Logging
 
 To automate routine Linux system maintenance tasks using Bash scripting — improving system reliability, simplifying administrative work, and demonstrating practical Linux OS knowledge.
 
-📅 Assignment Breakdown
-Day	Task
-Day 1	Backup Automation
-Day 2	System Update & Cleanup
-Day 3	Log Monitoring
-Day 4	Menu Integration
-Day 5	Error Handling & Logging Enhancements
-📜 License
 
+📜 License
 This project is open-source and available under the MIT License.
