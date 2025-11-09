@@ -72,13 +72,6 @@ Checks /var/log/syslog for keywords like error, fail, and critical
 Simple, clear, and user-friendly text-based menu for all operations
 <img width="980" height="320" alt="image" src="https://github.com/user-attachments/assets/adcbbeaf-10fe-49bb-9e22-4050af695e4f" />
 
-📁 Output Files
-File	Description
-/home/$USER/Backups/backup_<timestamp>.tar.gz	Backup archive
-/home/$USER/backup_log.txt	Backup operation logs
-/home/$USER/system_update_log.txt	System update and cleanup logs
-/home/$USER/alerts.txt	Log monitoring alerts
-
 🛠️ Technologies Used
 
 Bash Scripting
@@ -97,4 +90,5 @@ To automate routine Linux system maintenance tasks using Bash scripting — impr
 
 
 📜 License
+
 This project is open-source and available under the MIT License.
