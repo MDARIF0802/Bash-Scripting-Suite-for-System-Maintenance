@@ -1,0 +1,135 @@
+# ===========================================================
+# Bash Scripting Suite for System Maintenance
+# Assignment 5 (Linux OS and LSP)
+# Author: Md Arif
+# ===========================================================
+
+# ---------------------------
+# CONFIGURATION VARIABLES
+# ---------------------------
+BACKUP_SOURCE="/home/$USER/Documents"
+BACKUP_DEST="/home/$USER/Backups"
+BACKUP_LOG="/home/$USER/backup_log.txt"
+
+SYS_LOG="/home/$USER/system_update_log.txt"
+ALERT_LOG="/home/$USER/alerts.txt"
+SYSTEM_LOG_FILE="/var/log/syslog"
+
+# Ensure necessary directories exist
+mkdir -p "$BACKUP_DEST"
+
+# ---------------------------
+# FUNCTION: Backup System
+# ---------------------------
+backup_system() {
+    echo "========== SYSTEM BACKUP =========="
+    DATE=$(date +"%Y-%m-%d_%H-%M-%S")
+    BACKUP_FILE="$BACKUP_DEST/backup_$DATE.tar.gz"
+
+    echo "[$(date)] Starting backup..." >> "$BACKUP_LOG"
+
+    if [ -d "$BACKUP_SOURCE" ]; then
+        if tar -czf "$BACKUP_FILE" "$BACKUP_SOURCE" 2>>"$BACKUP_LOG"; then
+            echo "[$(date)] Backup successful: $BACKUP_FILE" >> "$BACKUP_LOG"
+            echo "✅ Backup completed successfully."
+        else
+            echo "[$(date)] Backup failed!" >> "$BACKUP_LOG"
+            echo "❌ Backup failed. Check $BACKUP_LOG for details."
+        fi
+    else
+        echo "[$(date)] Source directory not found: $BACKUP_SOURCE" >> "$BACKUP_LOG"
+        echo "⚠️ Source directory not found!"
+    fi
+}
+
+# ---------------------------
+# FUNCTION: Update & Clean System
+# ---------------------------
+update_cleanup() {
+    echo "========== SYSTEM UPDATE & CLEANUP =========="
+    echo "[$(date)] Starting system update..." >> "$SYS_LOG"
+
+    if sudo apt update && sudo apt upgrade -y >> "$SYS_LOG" 2>&1; then
+        echo "[$(date)] System updated successfully." >> "$SYS_LOG"
+        echo "✅ System updated successfully."
+    else
+        echo "[$(date)] System update failed!" >> "$SYS_LOG"
+        echo "❌ System update failed. Check $SYS_LOG."
+    fi
+
+    echo "[$(date)] Performing cleanup..." >> "$SYS_LOG"
+    sudo apt autoremove -y >> "$SYS_LOG" 2>&1
+    sudo apt autoclean -y >> "$SYS_LOG" 2>&1
+    echo "[$(date)] Cleanup complete." >> "$SYS_LOG"
+    echo "🧹 Cleanup completed."
+}
+
+# ---------------------------
+# FUNCTION: Monitor Logs
+# ---------------------------
+monitor_logs() {
+    echo "========== LOG MONITORING =========="
+    KEYWORDS=("error" "fail" "critical")
+
+    echo "[$(date)] Monitoring logs for issues..." >> "$ALERT_LOG"
+    echo "Checking last 100 lines of system logs for alerts..."
+
+    if [ -f "$SYSTEM_LOG_FILE" ]; then
+        tail -n 100 "$SYSTEM_LOG_FILE" | while read LINE; do
+            for WORD in "${KEYWORDS[@]}"; do
+                if echo "$LINE" | grep -iq "$WORD"; then
+                    echo "[$(date)] ALERT: Found '$WORD' -> $LINE" >> "$ALERT_LOG"
+                fi
+            done
+        done
+        echo "🔍 Log monitoring complete. Check $ALERT_LOG for alerts."
+    else
+        echo "⚠️ System log file not found: $SYSTEM_LOG_FILE"
+        echo "[$(date)] Log file not found." >> "$ALERT_LOG"
+    fi
+}
+
+# ---------------------------
+# MAIN MENU FUNCTION
+# ---------------------------
+show_menu() {
+    while true; do
+        echo "===================================="
+        echo "   🔧 System Maintenance Suite"
+        echo "===================================="
+        echo "1. Run Backup"
+        echo "2. Update & Clean System"
+        echo "3. Monitor Logs"
+        echo "4. Exit"
+        echo "------------------------------------"
+        read -p "Enter your choice [1-4]: " choice
+
+        case $choice in
+            1)
+                backup_system
+                ;;
+            2)
+                update_cleanup
+                ;;
+            3)
+                monitor_logs
+                ;;
+            4)
+                echo "Exiting Maintenance Suite... 👋"
+                exit 0
+                ;;
+            *)
+                echo "⚠️ Invalid option! Please try again."
+                ;;
+        esac
+
+        echo ""
+        read -p "Press Enter to continue..."
+        clear
+    done
+}
+
+# ---------------------------
+# START THE PROGRAM
+# ---------------------------
+show_menu
