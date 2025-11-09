@@ -1,5 +1,6 @@
+#!/bin/bash
 # ===========================================================
-# Bash Scripting Suite for System Maintenance
+# System Maintenance Suite (macOS & Linux Compatible)
 # Assignment 5 (Linux OS and LSP)
 # Author: Md Arif
 # ===========================================================
@@ -7,15 +8,15 @@
 # ---------------------------
 # CONFIGURATION VARIABLES
 # ---------------------------
-BACKUP_SOURCE="/home/$USER/Documents"
-BACKUP_DEST="/home/$USER/Backups"
-BACKUP_LOG="/home/$USER/backup_log.txt"
+SOURCE="/Users/$USER/Documents"              # Default backup source
+BACKUP_DEST="/Users/$USER/Backups"           # Backup destination
+BACKUP_LOG="/Users/$USER/backup_log.txt"     # Backup log file
 
-SYS_LOG="/home/$USER/system_update_log.txt"
-ALERT_LOG="/home/$USER/alerts.txt"
-SYSTEM_LOG_FILE="/var/log/syslog"
+SYS_LOG="/Users/$USER/system_update_log.txt" # System update log
+ALERT_LOG="/Users/$USER/alerts.txt"          # Log monitoring file
+SYSTEM_LOG_FILE="/var/log/system.log"        # macOS system log file
 
-# Ensure necessary directories exist
+# Ensure backup directory exists
 mkdir -p "$BACKUP_DEST"
 
 # ---------------------------
@@ -28,8 +29,8 @@ backup_system() {
 
     echo "[$(date)] Starting backup..." >> "$BACKUP_LOG"
 
-    if [ -d "$BACKUP_SOURCE" ]; then
-        if tar -czf "$BACKUP_FILE" "$BACKUP_SOURCE" 2>>"$BACKUP_LOG"; then
+    if [ -d "$SOURCE" ]; then
+        if tar -czf "$BACKUP_FILE" "$SOURCE" 2>>"$BACKUP_LOG"; then
             echo "[$(date)] Backup successful: $BACKUP_FILE" >> "$BACKUP_LOG"
             echo "✅ Backup completed successfully."
         else
@@ -37,7 +38,7 @@ backup_system() {
             echo "❌ Backup failed. Check $BACKUP_LOG for details."
         fi
     else
-        echo "[$(date)] Source directory not found: $BACKUP_SOURCE" >> "$BACKUP_LOG"
+        echo "[$(date)] Source directory not found: $SOURCE" >> "$BACKUP_LOG"
         echo "⚠️ Source directory not found!"
     fi
 }
@@ -49,19 +50,28 @@ update_cleanup() {
     echo "========== SYSTEM UPDATE & CLEANUP =========="
     echo "[$(date)] Starting system update..." >> "$SYS_LOG"
 
-    if sudo apt update && sudo apt upgrade -y >> "$SYS_LOG" 2>&1; then
-        echo "[$(date)] System updated successfully." >> "$SYS_LOG"
-        echo "✅ System updated successfully."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS update (softwareupdate requires sudo)
+        echo "Running macOS software update..." >> "$SYS_LOG"
+        softwareupdate -l >> "$SYS_LOG" 2>&1
+        echo "To install updates, run: sudo softwareupdate -i -a" >> "$SYS_LOG"
+        echo "⚙️ macOS update check completed (manual install may be needed)."
     else
-        echo "[$(date)] System update failed!" >> "$SYS_LOG"
-        echo "❌ System update failed. Check $SYS_LOG."
-    fi
+        # Linux (APT)
+        if sudo apt update && sudo apt upgrade -y >> "$SYS_LOG" 2>&1; then
+            echo "[$(date)] System updated successfully." >> "$SYS_LOG"
+            echo "✅ System updated successfully."
+        else
+            echo "[$(date)] System update failed!" >> "$SYS_LOG"
+            echo "❌ System update failed. Check $SYS_LOG."
+        fi
 
-    echo "[$(date)] Performing cleanup..." >> "$SYS_LOG"
-    sudo apt autoremove -y >> "$SYS_LOG" 2>&1
-    sudo apt autoclean -y >> "$SYS_LOG" 2>&1
-    echo "[$(date)] Cleanup complete." >> "$SYS_LOG"
-    echo "🧹 Cleanup completed."
+        echo "[$(date)] Performing cleanup..." >> "$SYS_LOG"
+        sudo apt autoremove -y >> "$SYS_LOG" 2>&1
+        sudo apt autoclean -y >> "$SYS_LOG" 2>&1
+        echo "[$(date)] Cleanup complete." >> "$SYS_LOG"
+        echo "🧹 Cleanup completed."
+    fi
 }
 
 # ---------------------------
@@ -96,6 +106,7 @@ show_menu() {
     while true; do
         echo "===================================="
         echo "   🔧 System Maintenance Suite"
+        echo "   Developed by: Md Arif"
         echo "===================================="
         echo "1. Run Backup"
         echo "2. Update & Clean System"
